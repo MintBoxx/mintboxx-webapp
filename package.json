@@ -1,7 +1,6 @@
 {
-  "name": "next-material-kit",
-  "version": "1.2.1",
-  "description": "NextJS Version of Material Kit React by Creative Tim (https://creative-tim.com)",
+  "name": "mintboxx",
+  "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,28 +9,8 @@
     "start": "next start",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && rm -rf .next/ && npm install && npm run dev"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/creativetimofficial/nextjs-material-kit.git"
-  },
-  "keywords": [
-    "next",
-    "nextjs",
-    "react",
-    "reactjs",
-    "npx",
-    "material",
-    "material-design",
-    "material-kit",
-    "material-kit-react",
-    "next-material-kit"
-  ],
-  "author": "Creative Tim",
+  "author": "MintBoxx",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/creativetimofficial/nextjs-material-kit/issues"
-  },
-  "homepage": "https://demos.creative-tim.com/nextjs-material-kit",
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@emotion/react": "^11.10.6",

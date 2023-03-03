@@ -1,5 +1,6 @@
 /*eslint-disable*/
 import React from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // @material-ui/core components
@@ -20,13 +21,45 @@ import Button from "/components/CustomButtons/Button.js";
 
 import styles from "/styles/jss/nextjs-material-kit/components/headerLinksStyle.js";
 
+import { truncateEthAddress } from "../../utils/truncAddress";
+
 const useStyles = makeStyles(styles);
 
 export default function HeaderLinks(props) {
+
+  const [address, setAddress] = useState(null);
+  useEffect(() => {
+    const addr = localStorage.getItem("walletAddress");
+    setAddress(addr);
+  }, []);
+
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [walletAddress, setWalletAddress] = useState("");
+
   const classes = useStyles();
+  const connectWallet = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        alert("Please Install MetaMask");
+        return;
+      }
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setIsWalletConnected(true);
+      setWalletAddress(accounts[0]);
+      localStorage.setItem("walletAddress", accounts[0]);
+      setAddress(accounts[0]);
+      // router.push("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <List className={classes.list}>
-      <ListItem className={classes.listItem}>
+      {/* <ListItem className={classes.listItem}>
         <CustomDropdown
           noLiPadding
           navDropdown
@@ -36,21 +69,14 @@ export default function HeaderLinks(props) {
             color: "transparent"
           }}
           buttonIcon={Apps}
-          dropdownList={[
-            <Link href="/components">
-              <a className={classes.dropdownLink}>All components</a>
-            </Link>,
-            <a
-              href="https://creativetimofficial.github.io/nextjs-material-kit/#/documentation?ref=njsmk-navbar"
-              target="_blank"
-              className={classes.dropdownLink}
-            >
-              Documentation
-            </a>
-          ]}
-        />
-      </ListItem>
-      <ListItem className={classes.listItem}>
+        //   dropdownList={[
+        //     <Link href="/landing">
+        //       <a className={classes.dropdownLink}>All components</a>
+        //     </Link>
+        //   ]}
+        // />
+      </ListItem> */}
+      {/* <ListItem className={classes.listItem}>
         <Button
           href="https://www.creative-tim.com/product/nextjs-material-kit-pro?ref=njsmk-navbar"
           color="transparent"
@@ -76,7 +102,7 @@ export default function HeaderLinks(props) {
             <DeleteIcon />
           </IconButton>
         </Tooltip>*/}
-        <Tooltip
+        {/* <Tooltip
           id="instagram-twitter"
           title="Follow us on twitter"
           placement={"top"}
@@ -91,40 +117,26 @@ export default function HeaderLinks(props) {
             <i className={classes.socialIcons + " fab fa-twitter"} />
           </Button>
         </Tooltip>
-      </ListItem>
+      </ListItem> */}
       <ListItem className={classes.listItem}>
-        <Tooltip
-          id="instagram-facebook"
-          title="Follow us on facebook"
-          placement={"top"}
-          classes={{ tooltip: classes.tooltip }}
-        >
-          <Button
-            color="transparent"
-            href="https://www.facebook.com/CreativeTim?ref=creativetim"
-            target="_blank"
-            className={classes.navLink}
-          >
-            <i className={classes.socialIcons + " fab fa-facebook"} />
-          </Button>
-        </Tooltip>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Tooltip
-          id="instagram-tooltip"
-          title="Follow us on instagram"
-          placement={"top"}
-          classes={{ tooltip: classes.tooltip }}
-        >
-          <Button
-            color="transparent"
-            href="https://www.instagram.com/CreativeTimOfficial?ref=creativetim"
-            target="_blank"
-            className={classes.navLink}
-          >
-            <i className={classes.socialIcons + " fab fa-instagram"} />
-          </Button>
-        </Tooltip>
+        
+          {address ? (
+        <Button
+        type="button"
+        // className="bg-[#1E50FF] outline-none border-none py-3 px-5 rounded-xl font-body cursor-pointer  duration-250 ease-in-out hover:transform-x-1 hover:drop-shadow-xl hover:shadow-sky-600 w-full mt-8 transition transform hover:-translate-y-3 motion-reduce:transition-none motion-reduce:hover:transform-none "
+      >
+        {truncateEthAddress(address)}
+      </Button>
+      ) : (
+        <Button
+                type="button"
+                // className="bg-[#1E50FF] outline-none border-none py-3 px-5 rounded-xl font-body cursor-pointer  duration-250 ease-in-out hover:transform-x-1 hover:drop-shadow-xl hover:shadow-sky-600 w-full mt-8 transition transform hover:-translate-y-3 motion-reduce:transition-none motion-reduce:hover:transform-none "
+                onClick={connectWallet}
+              >
+                Connect Wallet
+              </Button>
+      )}
+
       </ListItem>
     </List>
   );

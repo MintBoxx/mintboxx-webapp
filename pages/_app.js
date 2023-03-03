@@ -11,7 +11,7 @@ Router.events.on("routeChangeStart", (url) => {
   console.log(`Loading: ${url}`);
   document.body.classList.add("body-page-transition");
   ReactDOM.render(
-    <PageChange path={url} />,
+    <img  src="https://icon-library.com/images/loading-gif-icon/loading-gif-icon-17.jpg" />,
     document.getElementById("page-transition")
   );
 });

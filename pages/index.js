@@ -3,7 +3,7 @@ import Router from "next/router";
 
 export default class Index extends Component {
   componentDidMount = () => {
-    Router.push("/home");
+    Router.push("/landing");
   };
 
   render() {

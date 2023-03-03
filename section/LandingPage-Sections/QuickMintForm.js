@@ -1,11 +1,12 @@
 import React from "react";
+import Link from "next/link";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 
 // core components
 import GridContainer from "/components/Grid/GridContainer.js";
 import Button from "/components/CustomButtons/Button.js";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import { message, Upload, Form } from "antd";
 import Box from "@mui/material/Box";
@@ -13,6 +14,7 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 
 import { NFTStorage, File, Blob } from "nft.storage";
 
@@ -32,6 +34,12 @@ const useStyles = makeStyles(styles);
 export default function QuickMintForm() {
   const classes = useStyles();
 
+  const [address, setAddress] = useState("");
+  useEffect(() => {
+    const addr = localStorage.getItem("walletAddress");
+    setAddress(addr);
+  }, []);
+
   const [fileBlob, setFileBlob] = useState(null);
   const [nftURI, setNFTURI] = useState("");
   const [activeStep, setActiveStep] = useState(0);
@@ -43,6 +51,9 @@ export default function QuickMintForm() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [mintLauncher, setMintLauncher] = useState(false);
+  const [collectionExists, setCollectionExists] = useState(true);
+  const [CollectionName, setCollectionName] = useState("");
+  const [collectionSymbol, setCollectionSymbol] = useState("");
 
   const props = {
     name: "file",
@@ -96,6 +107,7 @@ export default function QuickMintForm() {
 
       setNFTURI(nftURI);
       console.log("NFT URI : ", nftURI);
+      console.log(address);
       return metadata.url;
     } catch (error) {
       console.error("IPFS upload failed:", error);
@@ -158,6 +170,41 @@ export default function QuickMintForm() {
                   labelCol={{ span: 400, style: { color: "black" } }} // Add style property to change label color
                 >
                   <Box component="form" noValidate sx={{ mt: 1 }}>
+                    {collectionExists && (
+                      <>
+                        <TextField
+                          margin="normal"
+                          required
+                          fullWidth
+                          id="cname"
+                          label="Collection Name" 
+                          name="Collection Name"
+                          color="primary"
+                          focused
+                          sx={{ input: { color: "black" } }}
+                          onChange={(event) => setCollectionName(event.target.value)}
+                        />
+                        <br />
+                        <br />
+                        <TextField
+                          margin="normal"
+                          required
+                          fullWidth
+                          name="Collection Symbol"
+                          label="Collection Symbol"
+                          type="text"
+                          id="csymbol"
+                          color="primary"
+                          focused
+                          sx={{ input: { color: "black" } }}
+                          onChange={(event) =>
+                            setCollectionSymbol(event.target.value)
+                          }
+                        />
+                        <br />
+                        <br />
+                      </>
+                    )}
                     <TextField
                       margin="normal"
                       required
@@ -231,49 +278,54 @@ export default function QuickMintForm() {
   } else if (two) {
     return (
       <>
-      <div className={classes.section}>
-        <div className="rounded-lg w-[500px]">
-          <Box sx={{ width: "100%" }}>
-            <Stepper activeStep={activeStep} alternativeLabel>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>
-                    <span style={{ color: "black" }}>{label}</span>
-                  </StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-          </Box>
-          <br />
-          <div>
-            Metadata URI : {nftURI}
-            <Button simple color="primary" size="lg" onClick={handleNext}>
-              Mint
-            </Button>
+        <div className={classes.section}>
+          <div className="rounded-lg w-[500px]">
+            <Box sx={{ width: "100%" }}>
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>
+                      <span style={{ color: "black" }}>{label}</span>
+                    </StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+            <br />
+            <div style={{ color: "black" }}>
+              <Typography variant="body1" fontWeight="bold" underline="always">
+                IPFS Link:{" "}
+              </Typography>
+              <Link href={nftURI}>
+                <a target="_blank">{nftURI}</a>
+              </Link>
+              <Button simple color="primary" size="lg" onClick={handleNext}>
+                Mint
+              </Button>
+            </div>
           </div>
-        </div>
         </div>
       </>
     );
   } else if (three) {
     return (
       <>
-      <div className={classes.section}>
-        <div className="rounded-lg w-[500px]">
-          <Box sx={{ width: "100%" }}>
-            <Stepper activeStep={activeStep} alternativeLabel>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>
-                    <span style={{ color: "black" }}>{label}</span>
-                  </StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-          </Box>
-          <br />
-          <div>Mint NFT Button</div>
-        </div>
+        <div className={classes.section}>
+          <div className="rounded-lg w-[500px]">
+            <Box sx={{ width: "100%" }}>
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>
+                      <span style={{ color: "black" }}>{label}</span>
+                    </StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+            <br />
+            <div style={{ color: "black" }}>Mint NFT Button</div>
+          </div>
         </div>
       </>
     );
@@ -281,6 +333,5 @@ export default function QuickMintForm() {
     return <div>Loading ...</div>;
   }
 }
-
 
 // https://i.pinimg.com/736x/95/2d/ca/952dcabb3176061abf09b4d86085901e.jpg

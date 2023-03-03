@@ -35,14 +35,7 @@ export default function PageChange(props) {
   const classes = useStyles();
   return (
     <div>
-      <div className={classes.wrapperDiv}>
-        <div className={classes.iconWrapper}>
-          <CircularProgress className={classes.progress} />
-        </div>
-        <h4 className={classes.title}>
-          Loading page contents for: {props.path}
-        </h4>
-      </div>
+      
     </div>
   );
 }
