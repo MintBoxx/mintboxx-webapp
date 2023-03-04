@@ -1,10 +1,12 @@
 import React from "react";
 import Link from "next/link";
+import { Card } from "react-bootstrap";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 
 // core components
 import GridContainer from "/components/Grid/GridContainer.js";
+import GridItem from "/components/Grid/GridItem.js";
 import Button from "/components/CustomButtons/Button.js";
 import { useState, useEffect } from "react";
 import { InboxOutlined } from "@ant-design/icons";
@@ -14,9 +16,13 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 
+import InfoArea from "/components/InfoArea/InfoArea.js";
+import TouchAppIcon from "@mui/icons-material/TouchApp";
+import Favorite from "@material-ui/icons/Favorite";
+import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import { NFTStorage, File, Blob } from "nft.storage";
+import Muted from "/components/Typography/Muted.js";
 
 import {
   QUICKMINT_FACTORY_ABI,
@@ -27,12 +33,12 @@ import { ethers } from "ethers";
 import styles from "/styles/jss/nextjs-material-kit/pages/landingPageSections/workStyle.js";
 
 const { Dragger } = Upload;
-const steps = ["Enter NFT Details", "Uploading on IPFS", "Minting your NFT"];
+const steps = ["Enter NFT Details", "View Metadata", "Mint Your NFT"];
 const useStyles = makeStyles(styles);
 
 export default function QuickMintForm() {
   const classes = useStyles();
-  
+
   const [fileBlob, setFileBlob] = useState(null);
   const [nftURI, setNFTURI] = useState("");
   const [activeStep, setActiveStep] = useState(0);
@@ -50,12 +56,12 @@ export default function QuickMintForm() {
   const [address, setAddress] = useState("");
   const [collectionAddress, setCollectionAddress] = useState("");
   const [txHash, setTxHash] = useState("");
+  const [imageLink, setImageLink] = useState("");
 
   useEffect(() => {
     // settingAddress();
     checkCollection();
   }, []);
-
 
   async function checkCollection() {
     const addr = localStorage.getItem("walletAddress");
@@ -155,15 +161,15 @@ export default function QuickMintForm() {
 
       console.log("Collection hash:", transactionResponse.hash);
       const user = await contract.userQuickMintCollection(addr);
-    const collectionAddress = await user[1];
-    console.log(collectionAddress);
-    setCollectionAddress(collectionAddress);
+      const collectionAddress = await user[1];
+      console.log(collectionAddress);
+      setCollectionAddress(collectionAddress);
     }
   }
 
-  async function MintNFT(){
+  async function MintNFT() {
     const addr = localStorage.getItem("walletAddress");
-    if(collectionAddress){
+    if (collectionAddress) {
       // Check if MetaMask is installed
       console.log("from check function in QuickMintForm.js: ", addr);
       if (typeof window.ethereum === "undefined") {
@@ -203,7 +209,8 @@ export default function QuickMintForm() {
       setTxHash(transaction.hash);
       console.log(transaction.hash);
       console.log("NFT MINTED");
-  }}
+    }
+  }
 
   const props = {
     name: "file",
@@ -236,8 +243,6 @@ export default function QuickMintForm() {
     },
   };
 
-
-
   async function uploadToIPFS() {
     setLoading(true);
     try {
@@ -251,15 +256,13 @@ export default function QuickMintForm() {
         description: description,
         image: new File([fileBlob], "image.jpg", { type: "image/jpeg" }),
       });
-
-      console.log("IPFS upload successful. Metadata:", metadata);
-      console.log("Metadata url: ", metadata.url);
-
       let nftURI = "https://nftstorage.link/ipfs/" + metadata.url.slice(7);
+      const data = await fetch(nftURI);
+      const json = await data.json();
 
+      let imageLink = "https://nftstorage.link/ipfs/" + json.image.slice(7);
+      setImageLink(imageLink);
       setNFTURI(nftURI);
-      console.log("NFT URI : ", nftURI);
-      console.log(address);
       return metadata.url;
     } catch (error) {
       console.error("IPFS upload failed:", error);
@@ -278,9 +281,9 @@ export default function QuickMintForm() {
     setLoading(false);
   };
 
-const handleFinalMint = async() =>{
-  await MintNFT();
-}
+  const handleFinalMint = async () => {
+    await MintNFT();
+  };
 
   const handleNext = async () => {
     await createCollection();
@@ -289,19 +292,27 @@ const handleFinalMint = async() =>{
     setThree(true);
   };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
-  const handleClick = () => {
-    setShowForm(true);
-  };
-
-  if (one) {
+  if (loading) {
+    return (
+      <div className={classes.section}>
+        <div className="rounded-lg w-[500px]">
+          <Box sx={{ width: "100%" }}>
+            <Stepper activeStep={activeStep} alternativeLabel>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>
+                    <span style={{ color: "black" }}>{label}</span>
+                  </StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
+          <br />
+          <div style={{ color: "black" }}>Loading ...</div>
+        </div>
+      </div>
+    );
+  } else if (one) {
     return (
       <div className={classes.section}>
         <GridContainer justify="center">
@@ -451,22 +462,33 @@ const handleFinalMint = async() =>{
               </Stepper>
             </Box>
             <br />
-            <div style={{ color: "black" }}>
-              <Typography variant="body1" fontWeight="bold" underline="always">
-                IPFS Link:{" "}
-              </Typography>
+            <div className={classes.section}>
               <Link href={nftURI}>
-                <a target="_blank">{nftURI}</a>
+                <a target="_blank">
+                  <GridContainer justify="center">
+                    <GridItem xs={12} sm={12} md={4}>
+                      <InfoArea
+                        title="View Metadata Link"
+                        icon={TouchAppIcon}
+                        iconColor="danger"
+                        vertical
+                      />
+                    </GridItem>
+                  </GridContainer>
+                </a>
               </Link>
+            </div>
+
+            <div style={{ color: "black" }}>
               <Button simple color="primary" size="lg" onClick={handleNext}>
-                Mint
+                Ready to Mint
               </Button>
             </div>
           </div>
         </div>
       </>
     );
-  } else if (three) {
+  } else {
     return (
       <>
         <div className={classes.section}>
@@ -484,25 +506,74 @@ const handleFinalMint = async() =>{
             </Box>
             <br />
             <div style={{ color: "black" }}>
-  {txHash ? (
-    // If txHash is available, display it instead of the button
-    <div>
-      View on Block Explorer: <Link href={"https://hyperspace.filfox.info/en/message/"+txHash}><a target="_blank">{"https://hyperspace.filfox.info/en/message/"+txHash}</a></Link>
-    </div>
-  ) : (
-    // If txHash is not available, display the button
-    <Button simple color="primary" size="lg" onClick={handleFinalMint}>
-      Mint NFT!!
-    </Button>
-  )}
-</div>
+              {txHash ? (
+                // If txHash is available, display it instead of the button
+                <>
+                  <div className={classes.section}>
+                    <Link
+                      href={
+                        "https://hyperspace.filfox.info/en/message/" + txHash
+                      }
+                    >
+                      <a target="_blank">
+                        <GridContainer justify="center">
+                          <GridItem xs={12} sm={12} md={4}>
+                           
+                            <img src="https://wallet.filfox.info/dist/img/logo.2668bf1.svg"/>
+                            <br/>
+                            <br/>
+                            <h4>View on Block Explorer</h4>
+                          </GridItem>
+                        </GridContainer>
+                      </a>
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                // If txHash is not available, display the button
+                <>
+                  <div className={classes.section}>
+                    <Card
+                      style={{
+                        margin: "0px 0px 0px 60px",
+                        borderRadius: "15px 15px 15px 15px",
+                        width: "545px",
+                      }}
+                    >
+                      <Card.Body>
+                        <Card.Img
+                          src={imageLink}
+                          style={{
+                            width: "500px",
+                            height: "200px",
+                            borderRadius: "15px 15px 0px 0px",
+                          }}
+                        />
+
+                        <br />
+                        <br />
+                        <Card.Title>
+                          <strong>{name}</strong>
+                        </Card.Title>
+                        <Card.Subtitle className="mb-2 text-muted">
+                          {description}
+                        </Card.Subtitle>
+                      </Card.Body>
+                      <br />
+                      <Card.Footer className="d-flex justify-content-between">
+                        <Button color="primary" round onClick={handleFinalMint}>
+                          <RocketLaunchIcon className={classes.icons} /> Mint
+                          NFT
+                        </Button>
+                      </Card.Footer>
+                    </Card>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </>
     );
-  } else {
-    return <div>Loading ...</div>;
   }
 }
-
-// https://i.pinimg.com/736x/95/2d/ca/952dcabb3176061abf09b4d86085901e.jpg

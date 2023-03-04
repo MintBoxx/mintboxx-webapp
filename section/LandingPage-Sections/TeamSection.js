@@ -3,9 +3,6 @@ import React from "react";
 import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-
-// @material-ui/icons
-
 // core components
 import GridContainer from "/components/Grid/GridContainer.js";
 import GridItem from "/components/Grid/GridItem.js";
@@ -40,7 +37,7 @@ export default function TeamSection() {
                 />
               </GridItem>
               <h4 className={classes.cardTitle}>
-                Gigi Hadid
+                Mint Unique NFTs
                 <br />
                 <small className={classes.smallTitle}>Model</small>
               </h4>
