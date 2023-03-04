@@ -487,7 +487,7 @@ const handleFinalMint = async() =>{
   {txHash ? (
     // If txHash is available, display it instead of the button
     <div>
-      Transaction hash: {txHash}
+      View on Block Explorer: <Link href={"https://hyperspace.filfox.info/en/message/"+txHash}><a target="_blank">{"https://hyperspace.filfox.info/en/message/"+txHash}</a></Link>
     </div>
   ) : (
     // If txHash is not available, display the button
