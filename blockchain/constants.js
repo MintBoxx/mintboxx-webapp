@@ -1,4 +1,6 @@
-export const QUICKMINT_FACTORY_ADDRESS = "0xfEF657F14151ea0F0021DCb7905188F2450a51C1"
+// export const QUICKMINT_FACTORY_ADDRESS = "0xfEF657F14151ea0F0021DCb7905188F2450a51C1"
+// export const QUICKMINT_FACTORY_ADDRESS = "0xdC4534C8fcEc1a9a7F4eB39dF7B7ee99220c5e4d" - Mumbai
+export const QUICKMINT_FACTORY_ADDRESS = "0xc1dcFf6be1EaaDE80F93d28C70fAa2792F0525f7"
 
 export const QUICKMINT_FACTORY_ABI = [
 	{
@@ -19,7 +21,7 @@ export const QUICKMINT_FACTORY_ABI = [
 				"type": "string"
 			}
 		],
-		"name": "CreateNewUserCollection",
+		"name": "CreateNewGreeter",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

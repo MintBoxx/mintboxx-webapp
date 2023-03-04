@@ -20,6 +20,7 @@
     "@mui/material": "^5.11.11",
     "antd": "^5.2.3",
     "classnames": "2.3.1",
+    "ethers": "^5.5.4",
     "moment": "2.29.4",
     "next": "12.2.5",
     "nft.storage": "^7.0.3",
